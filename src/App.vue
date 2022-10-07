@@ -19,7 +19,10 @@
     </div> <hr>
     <div class=" my-3 d-flex justify-content-between align-items-center">
       <span>Total : {{this.tasks.length}}</span>
-      <button class="btn btn-sm btn-danger" @click="clear()">Tasks clear</button>
+      <div>
+        <button class="btn btn-sm btn-danger me-1" @click="clear()">All clear</button>
+      <button class="btn btn-sm btn-danger" @click="ctc()">Completed Tasks clear</button>
+      </div>
     </div>
     
       <div class="row ">
@@ -39,12 +42,14 @@
       
       <div class="row p-3" v-for="(item,index) in completedItemFilter" :key="index">
         <div class="col-6">
-          <h6 class="text-center text-secondary " :class="item.state ? 'finishedSign': ''" >{{item.name}}</h6>
+          
+          <h6 class="text-center text-secondary " :class="item.state ? 'finishedSign': ''" > {{  item.name}}</h6>
         </div>
         <div class="col-6">
           <h6>
             <div class="text-center text-info">
-              <input type="checkbox" v-model="item.state">
+              <input type="checkbox" v-model="item.state" @click="checkboxcheck(index)">
+              
             </div>
           </h6>
         </div>
@@ -82,18 +87,47 @@
         this.inputValidate = this.taskName == '' ? true : false;
         if (this.inputValidate == false) {
           this.tasks.push({
-          id:1,
           name: this.taskName,
           state:false,
         });
+        localStorage.setItem("localTasks",JSON.stringify(this.tasks));
         this.taskName = '';
         }
       },
       clear(){
         this.tasks = [];
+        localStorage.setItem("localTasks",JSON.stringify(this.tasks));
 
-      }
+      },
+      ctc(){
+        // alert('you clicked completed task clear button');
+        this.tasks = this.tasks.filter((x)=> x.state !== true);
+        localStorage.setItem("localTasks",JSON.stringify(this.tasks));
+
+      },
+     
+    },
+    // beforeCreate() {
+    //   console.log('before create'); 
+    // },
+    // mounted() {
+    //    console.log('mounted');
+    // },
+    // beforeMount(){
+    //   console.log('before mount');
+    // },
+    // created() {
+    //    console.log('created');
+    // },
+
+  // Local Storeage tests  --> we can use except BeforeCreate(); others OK!!!!!!
+  beforeMount() {
+    let lcData = localStorage.getItem("localTasks");
+    if (lcData !== null) {
+      this.tasks = JSON.parse(lcData);
+      console.log(this.tasks);
     }
+  },
   };
 
 </script>
